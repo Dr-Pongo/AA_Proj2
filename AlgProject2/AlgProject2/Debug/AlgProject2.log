@@ -1,0 +1,13 @@
+﻿  Compare.cpp
+c:\users\dell\documents\visual studio 2015\projects\algproject2\algproject2\compare.cpp(26): error C3861: 'row_init': identifier not found
+c:\users\dell\documents\visual studio 2015\projects\algproject2\algproject2\compare.cpp(27): error C3861: 'column_init': identifier not found
+c:\users\dell\documents\visual studio 2015\projects\algproject2\algproject2\compare.cpp(29): warning C4018: '<': signed/unsigned mismatch
+c:\users\dell\documents\visual studio 2015\projects\algproject2\algproject2\compare.cpp(31): warning C4018: '<': signed/unsigned mismatch
+c:\users\dell\documents\visual studio 2015\projects\algproject2\algproject2\compare.cpp(33): error C3861: 'match': identifier not found
+c:\users\dell\documents\visual studio 2015\projects\algproject2\algproject2\compare.cpp(34): error C3861: 'indel': identifier not found
+c:\users\dell\documents\visual studio 2015\projects\algproject2\algproject2\compare.cpp(35): error C3861: 'indel': identifier not found
+c:\users\dell\documents\visual studio 2015\projects\algproject2\algproject2\compare.cpp(50): error C3861: 'goal_cell': identifier not found
+c:\users\dell\documents\visual studio 2015\projects\algproject2\algproject2\compare.cpp(59): error C3861: 'match_out': identifier not found
+c:\users\dell\documents\visual studio 2015\projects\algproject2\algproject2\compare.cpp(64): error C3861: 'insert_out': identifier not found
+c:\users\dell\documents\visual studio 2015\projects\algproject2\algproject2\compare.cpp(70): error C3861: 'delete_out': identifier not found
+c:\users\dell\documents\visual studio 2015\projects\algproject2\algproject2\compare.cpp(156): warning C4018: '<': signed/unsigned mismatch
