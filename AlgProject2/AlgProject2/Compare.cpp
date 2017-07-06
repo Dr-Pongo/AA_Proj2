@@ -9,6 +9,18 @@ using namespace std;
 
 const int MAXLEN = 10; /*Added in*/
 
+void column_init(int i);
+int string_compare(char *s, char *t);
+void reconstruct_path(char *s, char *t, int i, int j);
+void row_init(int i);
+void column_init(int i);
+int match(char c, char d);
+int indel(char c);
+void goal_cell(char *s, char *t, int *i, int *j);
+void insert_out(char *t, int j);
+void delete_out(char *s, int i);
+void match_out(char *s, char *t, int i, int j);
+
 typedef struct { 
 	int cost;	/* cost of reaching this cell */ 
 	int parent; /* parent cell */ 
@@ -71,7 +83,7 @@ void reconstruct_path(char *s, char *t, int i, int j) {
 		return; 
 	}
 }
-/*
+
 void row_init(int i) 
 { 
 	m[0][i].cost = i; 
@@ -84,8 +96,8 @@ void row_init(int i)
 		m[0][i].parent = -1;
 	}
 }
-*/
-void column_init(int i) 
+
+void column_init(int i)
 { 
 	m[i][0].cost = i; 
 	if (i > 0)
@@ -97,7 +109,7 @@ void column_init(int i)
 		m[i][0].parent = -1;
 	}
 }
-/*
+
 int match(char c, char d) 
 { 
 	if (c == d)
@@ -109,18 +121,18 @@ int match(char c, char d)
 		return(1);
 	}
 }
-*/
+
 int indel(char c) 
 { 
 	return(1); 
 }
-/*
-goal_cell(char *s, char *t, int *i, int *j) 
+
+void goal_cell(char *s, char *t, int *i, int *j) 
 { 
 	*i = strlen(s) - 1; 
 	*j = strlen(t) - 1; 
 }
-*/
+
 void insert_out(char *t, int j) 
 { 
 	printf("I"); 
@@ -142,15 +154,17 @@ void match_out(char *s, char *t, int i, int j)
 		printf("S");
 	}
 }
-
+/*
 void row_init(int i) 
 { 
-	m[0][i].cost = 0; /* note change */ 
-	m[0][i].parent = -1; /* note change */ 
+//note change
+	m[0][i].cost = 0;  
+//note change
+	m[0][i].parent = -1;
 }
 
 void goal_cell(char *s, char *t, int *i, int *j) {
-	int k; /* counter */
+	int k;//counter 
 	*i = strlen(s) - 1; 
 	*j = 0; 
 	for (k = 1; k < strlen(t); k++)
@@ -173,7 +187,9 @@ int match(char c, char d)
 		return(MAXLEN);
 	}
 }
+*/
 
 int main() {
-	cout << string_compare("abc", "abcd") << endl;
+	cout << string_compare("abc", "abcdefgh") << endl;
+	system("pause");
 }
