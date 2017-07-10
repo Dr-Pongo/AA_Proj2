@@ -74,3 +74,35 @@ StringCompareUtil::KeyCoordinate StringCompareUtil::GetKeyCoordinate(char key)
 {
 	return KeyboardMap[key];
 }
+
+bool StringCompareUtil::AreSameHand(char firstChar, char secondChar)
+{
+	int firstKeyCol = GetKeyCoordinate(firstChar).column;
+	int secondKeyCol = GetKeyCoordinate(secondChar).column;
+	bool isFirstKeyLeftHand, isSecondKeyOnSameHand;
+
+	isFirstKeyLeftHand = (0 <= firstKeyCol && firstKeyCol <= 3);
+
+	if (isFirstKeyLeftHand)
+	{
+		//Check if secondChar is in the same cols for left hand 
+		isSecondKeyOnSameHand = (0 <= secondKeyCol && secondKeyCol <= 4);
+	}
+	else {
+		//FirstKey is on RH, check if secondChar is in the same cols for right hand 
+		isSecondKeyOnSameHand = (5 <= secondKeyCol && secondKeyCol <= 9);
+	}
+
+	return isSecondKeyOnSameHand;
+}
+
+bool StringCompareUtil::AreSameFinger(char firstChar, char secondChar)
+{
+	int firstKeyCol = GetKeyCoordinate(firstChar).column;
+	int secondKeyCol = GetKeyCoordinate(secondChar).column;
+
+	int firstKeyFinger = (firstKeyCol >= 5) ? firstKeyCol - 5 : firstKeyCol;
+	int secondKeyFinger = (secondKeyCol >= 5) ? secondKeyCol - 5 : secondKeyCol;
+
+	return firstKeyFinger == secondKeyFinger;
+}

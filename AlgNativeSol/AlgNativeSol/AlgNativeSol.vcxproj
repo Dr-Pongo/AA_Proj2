@@ -111,6 +111,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="StringCompareUtil.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="StringCompareUtil.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
