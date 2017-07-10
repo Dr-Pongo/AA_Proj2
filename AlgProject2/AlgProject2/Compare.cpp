@@ -7,7 +7,7 @@
 #define DELETE 2 /* enumerated type symbol for delete */
 using namespace std;
 
-const int MAXLEN = 10; /*Added in*/
+const int MAXLEN = 100; /*Added in*/
 
 void column_init(int i);
 int string_compare(char *s, char *t);
@@ -190,6 +190,6 @@ int match(char c, char d)
 */
 
 int main() {
-	cout << string_compare("abc", "abcdefgh") << endl;
+	cout << string_compare("the rain in spain stays mainly on the plain", "teh driafna i pasin staya ksjnmly in th eplani") << endl;
 	system("pause");
 }
