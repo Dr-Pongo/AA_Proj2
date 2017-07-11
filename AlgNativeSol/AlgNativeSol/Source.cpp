@@ -3,6 +3,7 @@
 #include <string.h>
 #include <fstream>
 #include <string>
+#include "StringCompareUtil.h"
 
 #define MATCH 0 /* enumerated type symbol for match */ 
 #define INSERT 1 /* enumerated type symbol for insert */ 
