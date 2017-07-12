@@ -10,28 +10,48 @@
 #define DELETE 2 /* enumerated type symbol for delete */
 using namespace std;
 
-const int MAXLEN = 10; /*Added in*/
+const int MAXLEN = 1000; /*Added in*/
+const int INS = 0;
+const int DEL = 1;
+const int SUB = 2;
+const int TRA = 3;
+// not sure if we need a match option **
+const int MAT = 4;
 
-int string_compare(const char *s, const char *t, int i, int j);
+int string_compare(string s, string t, int i, int j);
 int match(char c, char d);
 int indel(char c);
 int arr[1000][1000] = { -1 };
+double ***mainArr;
 
 int wrapper_function(string target, string typo) 
 {
-	//string abc = "abc";
-	//string abc2 = "abcd";
-
+	// Old 2D array, can remove when we remove all refrences 
 	for (int i = 0; i < 1000; i++)
 		for (int j = 0; j < 1000; j++)
 			arr[i][j] = -1;
 
-	return string_compare(typo.c_str(), target.c_str(), typo.length(), target.length());
+	// 3D Array for storing return values
+	// mainArr[i][j][funtion]
+	mainArr = new double**[MAXLEN];
+	for (int i = 0; i < MAXLEN - 1; i++) 
+	{
+		mainArr[i] = new double*[MAXLEN];
+
+		for (int j = 0; j < MAXLEN - 1; j++)
+		{
+			// 3rd dimension for previous function
+			mainArr[i][j] = new double[5];
+		}
+	}
+
+	return string_compare(typo, target, typo.length(), target.length());
 	
 }
 
-int string_compare(const char*s, const char *t, int i, int j)
+int string_compare(string s, string t, int i, int j)
 {
+	// Set base cases (all INS or all DEL)
 	if (arr[i][j] != -1)
 	{
 		return arr[i][j];
