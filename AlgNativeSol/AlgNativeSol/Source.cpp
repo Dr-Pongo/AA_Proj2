@@ -22,7 +22,7 @@ int string_compare(string s, string t, int i, int j);
 int match(char c, char d);
 int indel(char c);
 int arr[1000][1000] = { -1 };
-double ***mainArr;
+int ***mainArr;
 
 int wrapper_function(string target, string typo) 
 {
@@ -33,15 +33,25 @@ int wrapper_function(string target, string typo)
 
 	// 3D Array for storing return values
 	// mainArr[i][j][funtion]
-	mainArr = new double**[MAXLEN];
+	mainArr = new int**[MAXLEN];
 	for (int i = 0; i < MAXLEN - 1; i++) 
 	{
-		mainArr[i] = new double*[MAXLEN];
+		mainArr[i] = new int*[MAXLEN];
 
 		for (int j = 0; j < MAXLEN - 1; j++)
 		{
 			// 3rd dimension for previous function
-			mainArr[i][j] = new double[5];
+			mainArr[i][j] = new int[5];
+		}
+	}
+	for (int i = 0; i < MAXLEN - 1; i++)
+	{
+		for (int j = 0; j < MAXLEN - 1; j++)
+		{
+			for (int p = 0; p < 5; p++)
+			{
+				mainArr[i][j][p] = -1;
+			}
 		}
 	}
 
