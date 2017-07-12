@@ -100,9 +100,117 @@ namespace StringCompareUtil
 		return firstKeyFinger == secondKeyFinger;
 	}
 
+	int InsertionCost(char firstChar, char secondChar)
+	{
+		int subCost = 0;
+		int temp = 0;
+
+		//Repeated character - 1
+		if (firstChar == secondChar)
+		{
+			subCost = 1;
+			return subCost;
+		}
+
+		//Space after key on bottom row - 2
+		if (GetKeyCoordinate(firstChar).column == 3 && secondChar == ' ')
+		{
+			subCost = 2;
+			return subCost;
+		}
+
+		//Space after something else - 6
+		//Character before a space - 6
+		if (secondChar == ' ' || firstChar == ' ')
+		{
+			subCost = 6;
+		}
+
+		//Before or after another key on same hand - d(k1, k2)
+		if (AreSameHand(firstChar, secondChar))
+		{
+			temp = KeyboardDistance(firstChar, secondChar);
+
+			//if this costs less than a previouis cost
+			if (subCost != 0 && temp < subCost)
+			{
+				subCost = temp;
+			}
+			//if there is no previous cost
+			else if (subCost == 0)
+			{
+				subCost = temp;
+			}
+			//else cheaper function already exists,
+			//keep subCost at the same value
+		}
+
+		//Before or after a key on opposite hand - 5		if (!AreSameHand(firstChar, secondChar))
+		{
+			temp = 5;
+
+			//if this costs less than a previouis cost
+			if (subCost != 0 && temp < subCost)
+			{
+				subCost = temp;
+			}
+			//if there is no previous cost
+			else if (subCost == 0)
+			{
+				subCost = temp;
+			}
+			//else cheaper function already exists,
+			//keep subCost at the same value
+		}
+		return subCost;
+	}
+
+	int DeletionnCost(char firstChar, char secondChar)
+	{
+		int subCost = 0;
+		int temp = 0;
+
+		//Deleting Repeated character - 1
+		if (firstChar == secondChar)
+		{
+			subCost = 1;
+			return subCost;
+		}
+
+		//Space - 3
+		if (secondChar == ' ')
+		{
+			subCost = 3;
+		}
+
+		//Character after another key on same hand - 2
+		if (AreSameHand(firstChar, secondChar)) 
+		{
+			subCost = 2;
+			return 2;
+		}
+
+		//Character after space or key on different hand - 6
+		if (firstChar == ' ' || !AreSameHand(firstChar, secondChar))
+		{
+			//if subCost is not 3
+			if (subCost == 0)
+			{
+				subCost = 6;
+			}
+		}
+
+		//First character in string - 6
+		//************************************************
+		//TODO: find out if character is first in string
+		//************************************************
+		
+		return subCost;
+	}
+
 	int SubstitutionCost(char firstChar, char secondChar)
 	{
-		int subCost = 0; 
+		int subCost = 0;
 		if (firstChar == ' ' || secondChar == ' ')
 		{
 			//TODO: Handle the cases for space
@@ -123,6 +231,33 @@ namespace StringCompareUtil
 				}
 			}
 		}
+		return subCost;
+	}
+
+	int TransposingCost(char firstChar, char secondChar)
+	{
+		int subCost = 0;
+		
+		//Transposing Space with anything else - 3
+		if (firstChar == ' ' || secondChar == ' ') 
+		{
+			subCost = 3;
+		}
+
+		//Keys on different hands - 1
+		if (!AreSameHand(firstChar, secondChar))
+		{
+			subCost = 1;
+			return subCost;
+		}
+
+		//Keys on the same hand - 2
+		if (AreSameHand(firstChar, secondChar))
+		{
+			subCost = 2;
+			return subCost;
+		}
+
 		return subCost;
 	}
 }
