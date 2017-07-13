@@ -12,4 +12,6 @@ namespace StringCompareUtil
 	bool AreSameHand(char firstChar, char secondChar);
 	bool AreSameFinger(char firstChar, char secondChar);
 	int SubstitutionCost(char firstChar, char secondChar);
+	int InsertionCost(char firstChar, char secondChar);
+	int DeletionnCost(char firstChar, char secondChar);
 };
