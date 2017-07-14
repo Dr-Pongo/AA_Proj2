@@ -9,37 +9,55 @@
 #define INSERT 1 /* enumerated type symbol for insert */ 
 #define DELETE 2 /* enumerated type symbol for delete */
 #define TRANSP 3
+#define INFIN 2000000000
 using namespace std;
 
-struct Cell
-{
-	int cost;
-	int previous;
-};
 
 const int MAXLEN = 1000; /*Added in*/
 
 int string_compare(const char * s, const char * t, int i, int j);
-int match(char c, char d);
-int indel(char c);
-Cell arr[100][100];
+StringCompareUtil::Cell arr[100][100];
 
 
-int wrapper_function(string target, string typo) 
+int wrapper_function(string target, string typo)
 {
 	for (int i = 0; i < 100; i++)
 	{
 		for (int j = 0; j < 100; j++)
-		{
-			arr[i][j].cost = -1;
+		{	//Init first row (Base case)
+			if (i == 0)
+			{
+				if (j == 0)
+				{	//Setting the [0,0] cell.
+					arr[i][j].cost = 0;
+					arr[i][j].previous = -1;
+				}
+				else {
+					arr[i][j].cost = j;
+					arr[i][j].previous = INSERT;
+				}
+			}	//Init first column (Base case)
+			else if (j == 0)
+			{
+				//So it doesn't overwrite [0,0]
+				if (i != 0)
+				{
+					arr[i][j].cost = i;
+					arr[i][j].previous = DELETE;
+				}
+			}
+			else {
+				arr[i][j].cost = -1;
+				arr[i][j].previous = -1;
+			}
 		}
 	}
 
-	
+
 	target.insert(0, 1, ' ');
 	typo.insert(0, 1, ' ');
 	return string_compare(typo.c_str(), target.c_str(), typo.length(), target.length());
-	
+
 }
 
 int string_compare(const char * s, const char * t, int i, int j)
@@ -48,45 +66,44 @@ int string_compare(const char * s, const char * t, int i, int j)
 	{
 		return arr[i][j].cost;
 	}
-	if (i == 0) return(j * indel(' '));
-	if (j == 0) return(i * indel(' '));
 
 	int k;
-	int opt[3];
-	int lowest_cost;
-	
-	opt[MATCH] = string_compare(s, t, i - 1, j - 1) + match(s[i], t[j]);
+	int opt[4];
+	StringCompareUtil::Cell lowest_cost;
+
+	//Substitution costs don't care about previous characters, only the current i & j chars
+	opt[MATCH] = string_compare(s, t, i - 1, j - 1) + StringCompareUtil::SubstitutionCost(s[i], t[j]);
+
 	opt[INSERT] = string_compare(s, t, i, j - 1) + StringCompareUtil::InsertionCost(s[i], t[j]);
-	opt[DELETE] = string_compare(s, t, i - 1, j) + StringCompareUtil::DeletionnCost(s[i], s[j]);
 
-	lowest_cost = opt[MATCH];
-	
-	for (k = INSERT; k <= DELETE; k++)
-	{
-		if (opt[k] < lowest_cost)
-		{
-			lowest_cost = opt[k];
-		}
-	}
-	arr[i][j].cost = lowest_cost;
-	return arr[i][j].cost;
-}
+	opt[DELETE] = string_compare(s, t, i - 1, j) + StringCompareUtil::DeletionCost(s[i], s[j]);
 
-int match(char c, char d)
-{
-	if (c == d)
+	if ((i > 1 && j > 1) && (s[i] == t[j - 1] && s[i - 1] == t[j]))
 	{
-		return(0);
+		opt[TRANSP] = string_compare(s, t, i - 2, j - 2) + StringCompareUtil::TranspositionCost(s[i], s[j]);
 	}
 	else
 	{
-		return(1);
+		opt[TRANSP] = INFIN; //Add a large cost so that string_compare won't pick this as a min. cost
 	}
-}
 
-int indel(char c)
-{
-	return(1);
+
+	lowest_cost.cost = opt[MATCH];
+	lowest_cost.previous = MATCH;
+
+	for (k = INSERT; k <= TRANSP; k++)
+	{
+		if (opt[k] < lowest_cost.cost)
+		{
+			lowest_cost.cost = opt[k];
+			lowest_cost.previous = k;
+		}
+	}
+
+	arr[i][j].cost = lowest_cost.cost;
+	arr[i][j].previous = lowest_cost.previous;
+
+	return arr[i][j].cost;
 }
 
 int main() {

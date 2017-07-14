@@ -2,8 +2,15 @@
 #include <map>
 #include <stdlib.h>
 
+#define MATCH 0 /* enumerated type symbol for match */ 
+#define INSERT 1 /* enumerated type symbol for insert */ 
+#define DELETE 2 /* enumerated type symbol for delete */
+#define TRANSP 3
+
+
 namespace StringCompareUtil
 {
+
 	std::map<char, KeyCoordinate> KeyboardMap =
 	{
 		//First row
@@ -52,10 +59,10 @@ namespace StringCompareUtil
 	};
 
 
-	int KeyboardDistance(char firstChar, char secondChar)
+	int KeyboardDistance(char targetChar, char typoChar)
 	{
-		int rowDiff = abs(GetKeyCoordinate(secondChar).row - GetKeyCoordinate(firstChar).row);
-		int colDiff = abs(GetKeyCoordinate(secondChar).column - GetKeyCoordinate(firstChar).column);
+		int rowDiff = abs(GetKeyCoordinate(typoChar).row - GetKeyCoordinate(targetChar).row);
+		int colDiff = abs(GetKeyCoordinate(typoChar).column - GetKeyCoordinate(targetChar).column);
 
 		if (rowDiff < colDiff)
 			return colDiff;
@@ -68,164 +75,92 @@ namespace StringCompareUtil
 		return KeyboardMap[key];
 	}
 
-	bool AreSameHand(char firstChar, char secondChar)
+	bool AreSameHand(char targetChar, char typoChar)
 	{
-		int firstKeyCol = GetKeyCoordinate(firstChar).column;
-		int secondKeyCol = GetKeyCoordinate(secondChar).column;
-		bool isFirstKeyLeftHand, isSecondKeyOnSameHand;
+		int targetKeyCol = GetKeyCoordinate(targetChar).column;
+		int typoKeyCol = GetKeyCoordinate(typoChar).column;
+		bool isTargetKeyLeftHand, isTypoKeyOnSameHand;
 
-		isFirstKeyLeftHand = (0 <= firstKeyCol && firstKeyCol <= 4);
+		isTargetKeyLeftHand = (0 <= targetKeyCol && targetKeyCol <= 4);
 
-		if (isFirstKeyLeftHand)
+		if (isTargetKeyLeftHand)
 		{
-			//Check if secondChar is in the same cols for left hand 
-			isSecondKeyOnSameHand = (0 <= secondKeyCol && secondKeyCol <= 4);
+			//Check if typoChar is in the same cols for left hand 
+			isTypoKeyOnSameHand = (0 <= typoKeyCol && typoKeyCol <= 4);
 		}
 		else {
-			//FirstKey is on RH, check if secondChar is in the same cols for right hand 
-			isSecondKeyOnSameHand = (5 <= secondKeyCol && secondKeyCol <= 9);
+			//FirstKey is on RH, check if typoChar is in the same cols for right hand 
+			isTypoKeyOnSameHand = (5 <= typoKeyCol && typoKeyCol <= 9);
 		}
 
-		return isSecondKeyOnSameHand;
+		return isTypoKeyOnSameHand;
 	}
 
-	bool AreSameFinger(char firstChar, char secondChar)
+	bool AreSameFinger(char targetChar, char typoChar)
 	{
-		int firstKeyCol = GetKeyCoordinate(firstChar).column;
-		int secondKeyCol = GetKeyCoordinate(secondChar).column;
+		int targetKeyCol = GetKeyCoordinate(targetChar).column;
+		int typoKeyCol = GetKeyCoordinate(typoChar).column;
 
-		int firstKeyFinger = (firstKeyCol >= 5) ? firstKeyCol - 5 : firstKeyCol;
-		int secondKeyFinger = (secondKeyCol >= 5) ? secondKeyCol - 5 : secondKeyCol;
+		int targetKeyFinger = (targetKeyCol >= 5) ? targetKeyCol - 5 : targetKeyCol;
+		int typoKeyFinger = (typoKeyCol >= 5) ? typoKeyCol - 5 : typoKeyCol;
 
-		return firstKeyFinger == secondKeyFinger;
+		return targetKeyFinger == typoKeyFinger;
 	}
 
-	int InsertionCost(char firstChar, char secondChar)
+	char FindActualPrevTargetChar(const char* s, const char* t, int i, int j, int prev, Cell **arr)
 	{
-		int subCost = 0;
-		int temp = 0;
+		if (prev == -1)
+			return ' ';
 
-		//Repeated character - 1
-		if (firstChar == secondChar)
+		//A Delete operation needs to look one further back. 
+		while (prev == DELETE && i > 0)
 		{
-			subCost = 1;
-			return subCost;
+			prev = arr[i--][j].previous;
 		}
 
-		//Space after key on bottom row - 2
-		if (GetKeyCoordinate(firstChar).column == 3 && secondChar == ' ')
-		{
-			subCost = 2;
-			return subCost;
-		}
-
-		//Space after something else - 6
-		//Character before a space - 6
-		if (secondChar == ' ' || firstChar == ' ')
-		{
-			subCost = 6;
-		}
-
-		//Before or after another key on same hand - d(k1, k2)
-		if (AreSameHand(firstChar, secondChar))
-		{
-			temp = KeyboardDistance(firstChar, secondChar);
-
-			//if this costs less than a previouis cost
-			if (subCost != 0 && temp < subCost)
-			{
-				subCost = temp;
-			}
-			//if there is no previous cost
-			else if (subCost == 0)
-			{
-				subCost = temp;
-			}
-			//else cheaper function already exists,
-			//keep subCost at the same value
-		}
-
-		//Before or after a key on opposite hand - 5		if (!AreSameHand(firstChar, secondChar))
-		{
-			temp = 5;
-
-			//if this costs less than a previouis cost
-			if (subCost != 0 && temp < subCost)
-			{
-				subCost = temp;
-			}
-			//if there is no previous cost
-			else if (subCost == 0)
-			{
-				subCost = temp;
-			}
-			//else cheaper function already exists,
-			//keep subCost at the same value
-		}
-		return subCost;
+		//If s[i-1]'s operation was either Insert, Sub, Match, or Transpose, the "actual" target character is t[i-1]
+		return (i >= 1) ? t[i - 1] : ' ';
 	}
 
-	int DeletionnCost(char firstChar, char secondChar)
+
+	int InsertionWrapper(const char * s, const char * t, int i, int j)
+	{
+		return 0;
+	}
+
+	int DeletionWrapper(const char * s, const char * t, int i, int j)
+	{
+		return 0;
+	}
+
+	int SubstitutionCost(char targetChar, char typoChar)
 	{
 		int subCost = 0;
-		int temp = 0;
 
-		//Deleting Repeated character - 1
-		if (firstChar == secondChar)
+		if (targetChar == typoChar)
 		{
-			subCost = 1;
-			return subCost;
+			return 0;
 		}
 
-		//Space - 3
-		if (secondChar == ' ')
+		//Space for anything or anything for space
+		if (targetChar == ' ' || typoChar == ' ')
 		{
-			subCost = 3;
-		}
-
-		//Character after another key on same hand - 2
-		if (AreSameHand(firstChar, secondChar)) 
-		{
-			subCost = 2;
-			return 2;
-		}
-
-		//Character after space or key on different hand - 6
-		if (firstChar == ' ' || !AreSameHand(firstChar, secondChar))
-		{
-			//if subCost is not 3
-			if (subCost == 0)
-			{
-				subCost = 6;
-			}
-		}
-
-		//First character in string - 6
-		//************************************************
-		//TODO: find out if character is first in string
-		//************************************************
-		
-		return subCost;
-	}
-
-	int SubstitutionCost(char firstChar, char secondChar)
-	{
-		int subCost = 0;
-		if (firstChar == ' ' || secondChar == ' ')
-		{
-			//TODO: Handle the cases for space
+			return 6;
 		}
 		else {
-			//Values from Cost table
-			if (AreSameHand(firstChar, secondChar))
+			//Key for another on same hand - d(k1, k2)
+			if (AreSameHand(targetChar, typoChar))
 			{
-				subCost = KeyboardDistance(firstChar, secondChar);
+				subCost = KeyboardDistance(targetChar, typoChar);
 			}
+			//Key for another on other hand - 
 			else {
-				if (AreSameFinger(firstChar, secondChar))
+				//On same finger - 1
+				if (AreSameFinger(targetChar, typoChar))
 				{
 					subCost = 1;
 				}
+				//On different finger - 5
 				else {
 					subCost = 5;
 				}
@@ -234,31 +169,140 @@ namespace StringCompareUtil
 		return subCost;
 	}
 
-	int TransposingCost(char firstChar, char secondChar)
+	int InsertionCost(char firstChar, char secondChar)
 	{
-		int subCost = 0;
-		
-		//Transposing Space with anything else - 3
-		if (firstChar == ' ' || secondChar == ' ') 
+		int insCost = 0;
+		int temp = 0;
+
+		//Repeated character - 1
+		if (firstChar == secondChar)
 		{
-			subCost = 3;
+			insCost = 1;
+			return insCost;
+		}
+
+		//Space after key on bottom row - 2
+		if (GetKeyCoordinate(firstChar).row == 3 && secondChar == ' ')
+		{
+			insCost = 2;
+			return insCost;
+		}
+
+		//Space after something else - 6
+		//Character before a space - 6
+		if (secondChar == ' ' || firstChar == ' ')
+		{
+			insCost = 6;
+		}
+
+		//Before or after another key on same hand - d(k1, k2)
+		if (AreSameHand(firstChar, secondChar))
+		{
+			temp = KeyboardDistance(firstChar, secondChar);
+
+			//if this costs less than a previouis cost
+			if (insCost != 0 && temp < insCost)
+			{
+				insCost = temp;
+			}
+			//if there is no previous cost
+			else if (insCost == 0)
+			{
+				insCost = temp;
+			}
+			//else cheaper function already exists,
+			//keep subCost at the same value
+		}
+
+		//Before or after a key on opposite hand - 5
+		if (!AreSameHand(firstChar, secondChar))
+		{
+			temp = 5;
+
+			//if this costs less than a previouis cost
+			if (insCost != 0 && temp < insCost)
+			{
+				insCost = temp;
+			}
+			//if there is no previous cost
+			else if (insCost == 0)
+			{
+				insCost = temp;
+			}
+			//else cheaper function already exists,
+			//keep subCost at the same value
+		}
+		return insCost;
+	}
+
+	int DeletionCost(char firstChar, char secondChar)
+	{
+		int delCost = 0;
+		int temp = 0;
+
+		//Deleting Repeated character - 1
+		if (firstChar == secondChar)
+		{
+			delCost = 1;
+			return delCost;
+		}
+
+		//Space - 3
+		if (secondChar == ' ')
+		{
+			delCost = 3;
+		}
+
+		//Character after another key on same hand - 2
+		if (AreSameHand(firstChar, secondChar))
+		{
+			delCost = 2;
+			return 2;
+		}
+
+		//Character after space or key on different hand - 6
+		if (firstChar == ' ' || !AreSameHand(firstChar, secondChar))
+		{
+			//if subCost is not 3
+			if (delCost == 0)
+			{
+				delCost = 6;
+			}
+		}
+
+		//First character in string - 6
+		//************************************************
+		//TODO: find out if character is first in string
+		//************************************************
+
+		return delCost;
+	}
+
+	int TranspositionCost(char firstChar, char secondChar)
+	{
+		int transpCost = 0;
+
+		//Transposing Space with anything else - 3
+		if (firstChar == ' ' || secondChar == ' ')
+		{
+			transpCost = 3;
 		}
 
 		//Keys on different hands - 1
 		if (!AreSameHand(firstChar, secondChar))
 		{
-			subCost = 1;
-			return subCost;
+			transpCost = 1;
+			return transpCost;
 		}
 
 		//Keys on the same hand - 2
 		if (AreSameHand(firstChar, secondChar))
 		{
-			subCost = 2;
-			return subCost;
+			transpCost = 2;
+			return transpCost;
 		}
 
-		return subCost;
+		return transpCost;
 	}
 }
 
