@@ -9,6 +9,7 @@ namespace StringCompareUtil
 	{
 		int cost;
 		int previous;
+		char letter;
 	};
 
 	struct KeyCoordinate

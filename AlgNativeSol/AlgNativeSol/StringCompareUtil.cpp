@@ -115,7 +115,7 @@ namespace StringCompareUtil
 		//A Delete operation needs to look one further back. 
 		while (prev == DELETE && i > 0)
 		{
-			prev = arr[i--][j].previous;
+			prev = arr[--i][j].previous;
 		}
 
 		//If s[i-1]'s operation was either Insert, Sub, Match, or Transpose, the "actual" target character is t[i-1]

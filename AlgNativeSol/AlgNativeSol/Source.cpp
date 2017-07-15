@@ -21,9 +21,9 @@ StringCompareUtil::Cell arr[100][100];
 
 int wrapper_function(string target, string typo)
 {
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < MAXLEN; i++)
 	{
-		for (int j = 0; j < 100; j++)
+		for (int j = 0; j < MAXLEN; j++)
 		{	//Init first row (Base case)
 			if (i == 0)
 			{
@@ -35,6 +35,7 @@ int wrapper_function(string target, string typo)
 				else {
 					arr[i][j].cost = j;
 					arr[i][j].previous = INSERT;
+					arr[i][j].letter = target[i];
 				}
 			}	//Init first column (Base case)
 			else if (j == 0)
@@ -47,13 +48,13 @@ int wrapper_function(string target, string typo)
 				}
 			}
 			else {
-				arr[i][j].cost = -1;
-				arr[i][j].previous = -1;
+					arr[i][j].cost = -1;
+					arr[i][j].previous = -1;
 			}
 		}
 	}
 
-
+	// Inserting space at the beginning of each string
 	target.insert(0, 1, ' ');
 	typo.insert(0, 1, ' ');
 	return string_compare(typo.c_str(), target.c_str(), typo.length(), target.length());
@@ -102,8 +103,85 @@ int string_compare(const char * s, const char * t, int i, int j)
 
 	arr[i][j].cost = lowest_cost.cost;
 	arr[i][j].previous = lowest_cost.previous;
+	if ((arr[i][j].previous == INSERT) || (arr[i][j].previous == MATCH))
+		arr[i][j].letter = s[i];
 
 	return arr[i][j].cost;
+}
+
+void print(int i, char c, int check)
+{
+	switch (check)
+	{
+		case INSERT:
+			cout << "Insert " << c << " before " << i << endl;
+			break;
+		case DELETE:
+			cout << "Delete " << i << endl;
+			break;
+		case TRANSP:
+			cout << "Transpose " << i << "-" << (i + 1) << endl;
+			break;
+		case MATCH:
+			cout << "Substitute " << c << " at " << i << endl;
+			break;
+	}
+	return;
+}
+
+void output()
+{
+	int i = 0;
+	int j = 0;
+	int itmp = i;
+	int jtmp = j;
+	int func = 0;
+
+	while ((j < MAXLEN - 1) || (i < MAXLEN - 1))
+	{
+		StringCompareUtil::Cell minFind;
+		minFind.cost = 100;
+		
+		if (j == (MAXLEN - 1))
+		{
+			print(i, arr[i][j].letter, arr[++i][j].previous);
+			i++;
+			continue;
+		}
+		if (i == (MAXLEN - 1))
+		{
+			j++;
+			print(i, arr[i][j].letter, arr[i][++j].previous);
+			continue;
+		}
+
+		if ((arr[i + 1][j].cost < minFind.cost) && (arr[i + 1][j].cost >= 0))
+		{
+			minFind.cost = arr[i + 1][j].cost;
+			minFind.letter = arr[i + 1][j].letter;
+			itmp = ++i;
+			jtmp = j;
+		}
+		if ((arr[i][j + 1].cost < minFind.cost) && (arr[i][j + 1].cost >= 0))
+		{
+			minFind.cost = arr[i][j + 1].cost;
+			minFind.letter = arr[i][j + 1].letter;
+			itmp = i;
+			jtmp = ++j;
+		}
+		if ((arr[i + 1][j + 1].cost < minFind.cost) && (arr[i + 1][j].cost >= 0))
+		{
+			minFind.cost = arr[i + 1][j + 1].cost;
+			minFind.letter = arr[i + 1][j + 1].letter;
+			itmp = ++i;
+			jtmp = ++j;
+		}
+		i = itmp;
+		j = jtmp;
+
+		print(i, minFind.letter, arr[i][j].previous);
+	}
+	return;
 }
 
 int main() {
@@ -136,6 +214,7 @@ int main() {
 		getline(inputFile, target, '\n');
 		getline(inputFile, typo, '\n');
 		cout << wrapper_function(target, typo) << endl;
+		output();
 	}
 
 	//cout << wrapper_function() << endl;
