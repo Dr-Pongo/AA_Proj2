@@ -13,9 +13,10 @@
 using namespace std;
 
 
-const int MAXLEN = 1000; /*Added in*/
+const int MAXLEN = 100; /*Added in*/
 
 int string_compare(const char * s, const char * t, int i, int j);
+
 StringCompareUtil::Cell arr[100][100];
 
 
@@ -57,7 +58,7 @@ int wrapper_function(string target, string typo)
 	// Inserting space at the beginning of each string
 	target.insert(0, 1, ' ');
 	typo.insert(0, 1, ' ');
-	return string_compare(typo.c_str(), target.c_str(), typo.length(), target.length());
+	return string_compare(target.c_str(), typo.c_str(), target.length(), typo.length());
 
 }
 
@@ -129,60 +130,47 @@ void print(int i, char c, int check)
 	return;
 }
 
-void output()
+
+void output_recursive(string target, string typo, int i, int j)
 {
-	int i = 0;
-	int j = 0;
-	int itmp = i;
-	int jtmp = j;
-	int func = 0;
-
-	while ((j < MAXLEN - 1) || (i < MAXLEN - 1))
+	//Base case where we reached [0,0]
+	if (arr[i][j].previous == -1)
 	{
-		StringCompareUtil::Cell minFind;
-		minFind.cost = 100;
-		
-		if (j == (MAXLEN - 1))
-		{
-			print(i, arr[i][j].letter, arr[++i][j].previous);
-			i++;
-			continue;
-		}
-		if (i == (MAXLEN - 1))
-		{
-			j++;
-			print(i, arr[i][j].letter, arr[i][++j].previous);
-			continue;
-		}
-
-		if ((arr[i + 1][j].cost < minFind.cost) && (arr[i + 1][j].cost >= 0))
-		{
-			minFind.cost = arr[i + 1][j].cost;
-			minFind.letter = arr[i + 1][j].letter;
-			itmp = ++i;
-			jtmp = j;
-		}
-		if ((arr[i][j + 1].cost < minFind.cost) && (arr[i][j + 1].cost >= 0))
-		{
-			minFind.cost = arr[i][j + 1].cost;
-			minFind.letter = arr[i][j + 1].letter;
-			itmp = i;
-			jtmp = ++j;
-		}
-		if ((arr[i + 1][j + 1].cost < minFind.cost) && (arr[i + 1][j].cost >= 0))
-		{
-			minFind.cost = arr[i + 1][j + 1].cost;
-			minFind.letter = arr[i + 1][j + 1].letter;
-			itmp = ++i;
-			jtmp = ++j;
-		}
-		i = itmp;
-		j = jtmp;
-
-		print(i, minFind.letter, arr[i][j].previous);
+		return;
 	}
-	return;
+
+	if (arr[i][j].previous == MATCH)
+	{
+		output_recursive(target, typo, i - 1, j - 1);
+		if (target[i] == typo[j])
+			return;
+		cout << "Substitute " << arr[i][j].letter << " at " << i << endl;
+		return;
+	}
+
+	if (arr[i][j].previous == INSERT)
+	{
+		output_recursive(target, typo, i, j - 1);
+		cout << "Insert " << arr[i][j].letter << " before " << i << endl;
+		return;
+	}
+
+	if (arr[i][j].previous == DELETE)
+	{
+		output_recursive(target, typo, i - 1, j);
+		cout << "Delete " << i << endl;
+		return;
+	}
+
+	if (arr[i][j].previous == TRANSP)
+	{
+		output_recursive(target, typo, i - 2, j - 2);
+		cout << "Transpose " << i << "-" << (i + 1) << endl;
+		return;
+	}
+
 }
+
 
 int main() {
 	string typo;
@@ -214,7 +202,7 @@ int main() {
 		getline(inputFile, target, '\n');
 		getline(inputFile, typo, '\n');
 		cout << wrapper_function(target, typo) << endl;
-		output();
+		output_recursive(target, typo, target.length() - 1, typo.length() - 1);
 	}
 
 	//cout << wrapper_function() << endl;
