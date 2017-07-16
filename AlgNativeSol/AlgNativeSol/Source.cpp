@@ -82,7 +82,7 @@ int string_compare(const char * s, const char * t, int i, int j)
 
 	if ((i > 1 && j > 1) && (s[i] == t[j - 1] && s[i - 1] == t[j]))
 	{
-		opt[TRANSP] = string_compare(s, t, i - 2, j - 2) + StringCompareUtil::TranspositionCost(s[i], s[j]);
+		opt[TRANSP] = string_compare(s, t, i - 2, j - 2) + StringCompareUtil::TranspositionWrapper(s, t, i, j, arr);
 	}
 	else
 	{

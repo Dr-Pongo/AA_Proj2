@@ -124,6 +124,42 @@ namespace StringCompareUtil
 		return t[i-1];
 	}
 
+	int SubstitutionCost(char targetChar, char typoChar)
+	{
+		int subCost = 0;
+
+		if (targetChar == typoChar)
+		{
+			return 0;
+		}
+
+		//Space for anything or anything for space
+		if (targetChar == ' ' || typoChar == ' ')
+		{
+			return 6;
+		}
+		else {
+			//Key for another on same hand - d(k1, k2)
+			if (AreSameHand(targetChar, typoChar))
+			{
+				subCost = KeyboardDistance(targetChar, typoChar);
+			}
+			//Key for another on other hand - 
+			else {
+				//On same finger - 1
+				if (AreSameFinger(targetChar, typoChar))
+				{
+					subCost = 1;
+				}
+				//On different finger - 5
+				else {
+					subCost = 5;
+				}
+			}
+		}
+		return subCost;
+	}
+
 	int InsertionWrapper(const char * s, const char * t, int i, int j, Cell arr[][100])
 	{
 		int minInsCost = InsertBefore(s, t, i, j);
@@ -275,42 +311,13 @@ namespace StringCompareUtil
 		return delCost;
 	}
 
-	int SubstitutionCost(char targetChar, char typoChar)
-	{
-		int subCost = 0;
 
-		if (targetChar == typoChar)
-		{
-			return 0;
-		}
-
-		//Space for anything or anything for space
-		if (targetChar == ' ' || typoChar == ' ')
-		{
-			return 6;
-		}
-		else {
-			//Key for another on same hand - d(k1, k2)
-			if (AreSameHand(targetChar, typoChar))
-			{
-				subCost = KeyboardDistance(targetChar, typoChar);
-			}
-			//Key for another on other hand - 
-			else {
-				//On same finger - 1
-				if (AreSameFinger(targetChar, typoChar))
-				{
-					subCost = 1;
-				}
-				//On different finger - 5
-				else {
-					subCost = 5;
-				}
-			}
-		}
-		return subCost;
-	}
 	
+	int TranspositionWrapper(const char * s, const char * t, int i, int j, Cell arr[][100])
+	{
+		return TranspositionCost(FindActualPrevTargetChar(s, t, i, j, arr), t[j]);
+	}
+
 	int TranspositionCost(char firstChar, char secondChar)
 	{
 		int transpCost = 0;

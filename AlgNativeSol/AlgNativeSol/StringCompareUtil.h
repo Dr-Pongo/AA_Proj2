@@ -24,6 +24,7 @@ namespace StringCompareUtil
 	bool AreSameFinger(char firstChar, char secondChar);
 	char FindActualPrevTargetChar(const char* s, const char* t, int i, int j, Cell arr[][100]);
 
+	int SubstitutionCost(char firstChar, char secondChar);
 
 	int InsertionWrapper(const char * s, const char * t, int i, int j, Cell arr[][100]);
 	int InsertBefore(const char * s, const char * t, int i, int j);
@@ -32,7 +33,7 @@ namespace StringCompareUtil
 	int DeletionWrapper(const char * s, const char * t, int i, int j, Cell arr[][100]);
 	int DeletionCost(char firstChar, char secondChar);
 
-	int SubstitutionCost(char firstChar, char secondChar);
+	int TranspositionWrapper(const char * s, const char * t, int i, int j, Cell arr[][100]);
 	int TranspositionCost(char firstChar, char secondChar);
 };
 #endif // !STRINGCOMPAREUTIL_H
