@@ -22,6 +22,9 @@ StringCompareUtil::Cell arr[100][100];
 
 int wrapper_function(string target, string typo)
 {
+	target.insert(0, 1, ' ');
+	typo.insert(0, 1, ' ');
+
 	for (int i = 0; i < MAXLEN; i++)
 	{
 		for (int j = 0; j < MAXLEN; j++)
@@ -36,7 +39,8 @@ int wrapper_function(string target, string typo)
 				else {
 					arr[i][j].cost = j;
 					arr[i][j].previous = INSERT;
-					arr[i][j].letter = target[i];
+					if(j < target.length())
+					arr[i][j].letter = typo[j];
 				}
 			}	//Init first column (Base case)
 			else if (j == 0)
@@ -56,8 +60,6 @@ int wrapper_function(string target, string typo)
 	}
 
 	// Inserting space at the beginning of each string
-	target.insert(0, 1, ' ');
-	typo.insert(0, 1, ' ');
 	return string_compare(target.c_str(), typo.c_str(), target.length(), typo.length());
 
 }
