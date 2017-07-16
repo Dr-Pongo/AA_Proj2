@@ -24,7 +24,10 @@ namespace StringCompareUtil
 	bool AreSameFinger(char firstChar, char secondChar);
 	char FindActualPrevTargetChar(const char* s, const char* t, int i, int j, int prev, Cell **arr);
 
-	int InsertionWrapper(const char * s, const char * t, int i, int j);
+	int InsertionWrapper(const char * s, const char * t, int i, int j, Cell arr[][100]);
+	int InsertBefore(const char * s, const char * t, int i, int j, Cell **arr);
+	int InsertAfter(const char * s, const char * t, int i, int j, Cell **arr);
+
 	int DeletionWrapper(const char * s, const char * t, int i, int j);
 
 	int SubstitutionCost(char firstChar, char secondChar);

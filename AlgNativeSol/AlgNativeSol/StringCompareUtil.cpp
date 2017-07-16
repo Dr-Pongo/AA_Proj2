@@ -6,6 +6,8 @@
 #define INSERT 1 /* enumerated type symbol for insert */ 
 #define DELETE 2 /* enumerated type symbol for delete */
 #define TRANSP 3
+#define INFIN 2000000000
+
 
 
 namespace StringCompareUtil
@@ -109,8 +111,8 @@ namespace StringCompareUtil
 
 	char FindActualPrevTargetChar(const char* s, const char* t, int i, int j, int prev, Cell **arr)
 	{
-		if (prev == -1)
-			return ' ';
+		//if (prev == -1)
+		//	return ' ';
 
 		//A Delete operation needs to look one further back. 
 		while (prev == DELETE && i > 0)
@@ -122,11 +124,6 @@ namespace StringCompareUtil
 		return (i >= 1) ? t[i - 1] : ' ';
 	}
 
-
-	int InsertionWrapper(const char * s, const char * t, int i, int j)
-	{
-		return 0;
-	}
 
 	int DeletionWrapper(const char * s, const char * t, int i, int j)
 	{
@@ -169,17 +166,114 @@ namespace StringCompareUtil
 		return subCost;
 	}
 
+
+	int InsertBefore(const char * s, const char * t, int i, int j, Cell arr[][100])
+	{
+		if (i == (strlen(s) - 1))
+		{
+			return INFIN;
+		}
+
+		//Want to compare current t[j] with s's next character (s[i+1])
+		char firstChar = t[j], secondChar = s[i + 1];
+		int insCost = 0;
+
+		//Repeated character - 1
+		if (firstChar == secondChar)
+		{
+			return 1;
+		}
+
+		//Character before a space - 6
+		if (firstChar != ' ' && secondChar == ' ')
+		{
+			insCost = 6;
+		}
+		//Before another key on same hand - d(k1, k2)
+		if (AreSameHand(firstChar, secondChar))
+		{
+			insCost = KeyboardDistance(firstChar, secondChar);
+		}
+		//Before a key on opposite hand
+		else 
+		{
+			insCost = 5;
+		}
+
+		return insCost;
+	}
+
+	int InsertAfter(const char * s, const char * t, int i , int j, Cell arr[][100])
+	{
+		if (i == 1)
+		{
+			return INFIN;
+		}
+
+		//Want to compare current t[j] with s's previous character (s[i-1])
+		char firstChar = s[i - 1], secondChar = t[j];
+		int insCost = 0;
+
+		//Repeated character - 1
+		if (firstChar == secondChar)
+		{
+			return 1;
+		}
+
+		//Space after key on .. 
+		if (secondChar == ' ')
+		{
+			//Bottom row - 2
+			if (GetKeyCoordinate(firstChar).row == 3)
+				insCost = 2;
+			//Something else - 6
+			else
+				insCost = 6;
+		}
+		//Character after a space - 6
+		if (firstChar == ' ' && secondChar != ' ')
+		{
+			insCost = 6;
+		}
+
+
+		//After another key on same hand - d(k1, k2)
+		if (AreSameHand(firstChar, secondChar))
+		{
+			insCost = KeyboardDistance(firstChar, secondChar);
+		}
+		//After a key on opposite hand - 5
+		else {
+			insCost = 5;
+		}
+
+		return insCost;
+	}
+
+	int InsertionWrapper(const char * s, const char * t, int i, int j, Cell arr[][100])
+	{
+		int minInsCost = InsertBefore(s, t, i , j, arr);
+		int insAfterCost = InsertAfter(s, t, i , j, arr);
+
+		if (insAfterCost < minInsCost)
+		{
+			minInsCost = insAfterCost;
+		}
+
+		return minInsCost;
+	}
+
 	int InsertionCost(char firstChar, char secondChar)
 	{
 		int insCost = 0;
 		int temp = 0;
 
 		//Repeated character - 1
-		if (firstChar == secondChar)
-		{
-			insCost = 1;
-			return insCost;
-		}
+		//if (firstChar == secondChar)
+		//{
+		//	insCost = 1;
+		//	return insCost;
+		//}
 
 		//Space after key on bottom row - 2
 		if (GetKeyCoordinate(firstChar).row == 3 && secondChar == ' ')
