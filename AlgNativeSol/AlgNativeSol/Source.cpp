@@ -22,8 +22,8 @@ StringCompareUtil::Cell arr[100][100];
 
 int wrapper_function(string target, string typo)
 {
-	target.insert(0, 1, ' ');
-	typo.insert(0, 1, ' ');
+	//target.insert(0, 1, ' ');
+	//typo.insert(0, 1, ' ');
 
 	for (int i = 0; i < MAXLEN; i++)
 	{
@@ -35,6 +35,7 @@ int wrapper_function(string target, string typo)
 				{	//Setting the [0,0] cell.
 					arr[i][j].cost = 0;
 					arr[i][j].previous = -1;
+					arr[i][j].letter = ' ';
 				}
 				else {
 					arr[i][j].cost = j;
@@ -59,9 +60,7 @@ int wrapper_function(string target, string typo)
 		}
 	}
 
-	// Inserting space at the beginning of each string
 	return string_compare(target.c_str(), typo.c_str(), target.length(), typo.length());
-
 }
 
 int string_compare(const char * s, const char * t, int i, int j)
@@ -106,7 +105,7 @@ int string_compare(const char * s, const char * t, int i, int j)
 
 	arr[i][j].cost = lowest_cost.cost;
 	arr[i][j].previous = lowest_cost.previous;
-	if ((arr[i][j].previous == INSERT) || (arr[i][j].previous == MATCH))
+	if ((arr[i][j].previous == INSERT) || (arr[i][j].previous == MATCH && s[i] != t[j]))
 		arr[i][j].letter = s[i];
 
 	return arr[i][j].cost;
@@ -203,6 +202,8 @@ int main() {
 		}
 		getline(inputFile, target, '\n');
 		getline(inputFile, typo, '\n');
+		target.insert(0, 1, ' ');
+		typo.insert(0, 1, ' ');
 		cout << wrapper_function(target, typo) << endl;
 		output_recursive(target, typo, target.length() - 1, typo.length() - 1);
 	}
