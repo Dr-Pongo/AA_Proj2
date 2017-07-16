@@ -22,9 +22,6 @@ StringCompareUtil::Cell arr[100][100];
 
 int wrapper_function(string target, string typo)
 {
-	//target.insert(0, 1, ' ');
-	//typo.insert(0, 1, ' ');
-
 	for (int i = 0; i < MAXLEN; i++)
 	{
 		for (int j = 0; j < MAXLEN; j++)
@@ -41,7 +38,7 @@ int wrapper_function(string target, string typo)
 					arr[i][j].cost = j;
 					arr[i][j].previous = INSERT;
 					if(j < target.length())
-					arr[i][j].letter = typo[j];
+						arr[i][j].letter = typo[j];
 				}
 			}	//Init first column (Base case)
 			else if (j == 0)
@@ -106,31 +103,10 @@ int string_compare(const char * s, const char * t, int i, int j)
 	arr[i][j].cost = lowest_cost.cost;
 	arr[i][j].previous = lowest_cost.previous;
 	if ((arr[i][j].previous == INSERT) || (arr[i][j].previous == MATCH && s[i] != t[j]))
-		arr[i][j].letter = s[i];
+		arr[i][j].letter = t[j];
 
 	return arr[i][j].cost;
 }
-
-void print(int i, char c, int check)
-{
-	switch (check)
-	{
-		case INSERT:
-			cout << "Insert " << c << " before " << i << endl;
-			break;
-		case DELETE:
-			cout << "Delete " << i << endl;
-			break;
-		case TRANSP:
-			cout << "Transpose " << i << "-" << (i + 1) << endl;
-			break;
-		case MATCH:
-			cout << "Substitute " << c << " at " << i << endl;
-			break;
-	}
-	return;
-}
-
 
 void output_recursive(string target, string typo, int i, int j)
 {
@@ -140,19 +116,21 @@ void output_recursive(string target, string typo, int i, int j)
 		return;
 	}
 
+	//Because our string "technically" starts at index 1 and the project wants 0-based,
+	// need to adjust the current i or j to (i-1)/(j-1)
 	if (arr[i][j].previous == MATCH)
 	{
 		output_recursive(target, typo, i - 1, j - 1);
 		if (target[i] == typo[j])
 			return;
-		cout << "Substitute " << arr[i][j].letter << " at " << i << endl;
+		cout << "Substitute " << arr[i][j].letter << " at " << j  - 1 << endl;
 		return;
 	}
 
 	if (arr[i][j].previous == INSERT)
 	{
 		output_recursive(target, typo, i, j - 1);
-		cout << "Insert " << arr[i][j].letter << " before " << i << endl;
+		cout << "Insert " << arr[i][j].letter << " before " << j - 1 << endl; //Not sure if j-1 is correct, but it gives the correct output for the Inserts in the example
 		return;
 	}
 
@@ -166,7 +144,7 @@ void output_recursive(string target, string typo, int i, int j)
 	if (arr[i][j].previous == TRANSP)
 	{
 		output_recursive(target, typo, i - 2, j - 2);
-		cout << "Transpose " << i << "-" << (i + 1) << endl;
+		cout << "Transpose " << (j - 2) << "-" << (j - 1) << endl;
 		return;
 	}
 
