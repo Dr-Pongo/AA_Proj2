@@ -12,7 +12,6 @@
 #define INFIN 2000000000
 using namespace std;
 
-
 const int MAXLEN = 100; /*Added in*/
 
 int string_compare(const char * s, const char * t, int i, int j);
@@ -35,9 +34,9 @@ int wrapper_function(string target, string typo)
 					arr[i][j].letter = ' ';
 				}
 				else {
-					arr[i][j].cost = j;
+					arr[i][j].cost = StringCompareUtil::InsertAfter(target.c_str(), typo.c_str(), i , j, arr);
 					arr[i][j].previous = INSERT;
-					if(j < target.length())
+					if(j < target.length() && j < typo.length())
 						arr[i][j].letter = typo[j];
 				}
 			}	//Init first column (Base case)
@@ -46,7 +45,7 @@ int wrapper_function(string target, string typo)
 				//So it doesn't overwrite [0,0]
 				if (i != 0)
 				{
-					arr[i][j].cost = i;
+					arr[i][j].cost = StringCompareUtil::DeletionWrapper(target.c_str(), typo.c_str(), i, j, arr);
 					arr[i][j].previous = DELETE;
 				}
 			}

@@ -16,6 +16,7 @@ namespace StringCompareUtil
 	{
 		int row;
 		int column;
+		char finger;
 	};
 
 	int KeyboardDistance(char, char);

@@ -16,48 +16,48 @@ namespace StringCompareUtil
 	std::map<char, KeyCoordinate> KeyboardMap =
 	{
 		//First row
-		{ '1',{ 0, 0 } },
-		{ '2',{ 0, 1 } },
-		{ '3',{ 0, 2 } },
-		{ '4',{ 0, 3 } },
-		{ '5',{ 0, 4 } },
-		{ '6',{ 0, 5 } },
-		{ '7',{ 0, 6 } },
-		{ '8',{ 0, 7 } },
-		{ '9',{ 0, 8 } },
-		{ '0',{ 0, 9 } },
+		{ '1',{ 0, 0, 'P' } },
+		{ '2',{ 0, 1, 'R' } },
+		{ '3',{ 0, 2, 'M' } },
+		{ '4',{ 0, 3, 'I' } },
+		{ '5',{ 0, 4, 'I' } },
+		{ '6',{ 0, 5, 'I' } },
+		{ '7',{ 0, 6, 'I' } },
+		{ '8',{ 0, 7, 'M' } },
+		{ '9',{ 0, 8, 'R' } },
+		{ '0',{ 0, 9, 'P' } },
 		//Second row
-		{ 'q',{ 1, 0 } },
-		{ 'w',{ 1, 1 } },
-		{ 'e',{ 1, 2 } },
-		{ 'r',{ 1, 3 } },
-		{ 't',{ 1, 4 } },
-		{ 'y',{ 1, 5 } },
-		{ 'u',{ 1, 6 } },
-		{ 'i',{ 1, 7 } },
-		{ 'o',{ 1, 8 } },
-		{ 'p',{ 1, 9 } },
+		{ 'q',{ 1, 0, 'P' } },
+		{ 'w',{ 1, 1, 'R' } },
+		{ 'e',{ 1, 2, 'M' } },
+		{ 'r',{ 1, 3, 'I' } },
+		{ 't',{ 1, 4, 'I' } },
+		{ 'y',{ 1, 5, 'I' } },
+		{ 'u',{ 1, 6, 'I' } },
+		{ 'i',{ 1, 7, 'M' } },
+		{ 'o',{ 1, 8, 'R' } },
+		{ 'p',{ 1, 9, 'P' } },
 		//Third row
-		{ 'a',{ 2, 0 } },
-		{ 's',{ 2, 1 } },
-		{ 'd',{ 2, 2 } },
-		{ 'f',{ 2, 3 } },
-		{ 'g',{ 2, 4 } },
-		{ 'h',{ 2, 5 } },
-		{ 'j',{ 2, 6 } },
-		{ 'k',{ 2, 7 } },
-		{ 'l',{ 2, 8 } },
-		{ ';',{ 2, 9 } },
+		{ 'a',{ 2, 0, 'P' } },
+		{ 's',{ 2, 1, 'R' } },
+		{ 'd',{ 2, 2, 'M' } },
+		{ 'f',{ 2, 3, 'I' } },
+		{ 'g',{ 2, 4, 'I' } },
+		{ 'h',{ 2, 5, 'I' } },
+		{ 'j',{ 2, 6, 'I' } },
+		{ 'k',{ 2, 7, 'M' } },
+		{ 'l',{ 2, 8, 'R' } },
+		{ ';',{ 2, 9, 'P' } },
 		//Fourth row
-		{ 'z',{ 3, 0 } },
-		{ 'x',{ 3, 1 } },
-		{ 'c',{ 3, 2 } },
-		{ 'v',{ 3, 3 } },
-		{ 'b',{ 3, 4 } },
-		{ 'n',{ 3, 5 } },
-		{ 'm',{ 3, 6 } },
-		{ ',',{ 3, 7 } },
-		{ '.',{ 3, 8 } },
+		{ 'z',{ 3, 0, 'P' } },
+		{ 'x',{ 3, 1, 'R' } },
+		{ 'c',{ 3, 2, 'M' } },
+		{ 'v',{ 3, 3, 'I' } },
+		{ 'b',{ 3, 4, 'I' } },
+		{ 'n',{ 3, 5, 'I' } },
+		{ 'm',{ 3, 6, 'I' } },
+		{ ',',{ 3, 7, 'M' } },
+		{ '.',{ 3, 8, 'R' } },
 	};
 
 
@@ -100,22 +100,16 @@ namespace StringCompareUtil
 
 	bool AreSameFinger(char targetChar, char typoChar)
 	{
-		int targetKeyCol = GetKeyCoordinate(targetChar).column;
-		int typoKeyCol = GetKeyCoordinate(typoChar).column;
-
-		int targetKeyFinger = (targetKeyCol >= 5) ? targetKeyCol - 5 : targetKeyCol;
-		int typoKeyFinger = (typoKeyCol >= 5) ? typoKeyCol - 5 : typoKeyCol;
-
-		return targetKeyFinger == typoKeyFinger;
+		return GetKeyCoordinate(targetChar).finger == GetKeyCoordinate(typoChar).finger;
 	}
 
 	char FindActualPrevTargetChar(const char* s, const char* t, int i, int j, Cell arr[][100])
 	{
 		//TODO: Read s[i-1]'s parent operation?
-		int prev = arr[i - 1][j - 1].previous;
+		int prev = arr[i - 1][j].previous;
 
 		//A Delete operation needs to look one further back. 
-		while (prev == DELETE && i > 0)
+		while (prev == DELETE && i > 1)
 		{
 			prev = arr[--i][j].previous;
 		}
@@ -123,6 +117,7 @@ namespace StringCompareUtil
 		//If s[i-1]'s operation was either Insert, Sub, Match, or Transpose, the "actual" target character is t[i-1]
 		return t[i-1];
 	}
+
 
 	int SubstitutionCost(char targetChar, char typoChar)
 	{
@@ -160,6 +155,7 @@ namespace StringCompareUtil
 		return subCost;
 	}
 
+
 	int InsertionWrapper(const char * s, const char * t, int i, int j, Cell arr[][100])
 	{
 		int minInsCost = InsertBefore(s, t, i, j);
@@ -173,7 +169,6 @@ namespace StringCompareUtil
 		return minInsCost;
 	}
 
-
 	int InsertBefore(const char * s, const char * t, int i, int j)
 	{
 		if (i == (strlen(s) - 1))
@@ -183,7 +178,6 @@ namespace StringCompareUtil
 
 		//Want to compare current t[j] with s's next character (s[i+1])
 		char firstChar = t[j], secondChar = s[i + 1];
-		int insCost = 0;
 
 		//Repeated character - 1
 		if (firstChar == secondChar)
@@ -194,20 +188,18 @@ namespace StringCompareUtil
 		//Character before a space - 6
 		if (firstChar != ' ' && secondChar == ' ')
 		{
-			insCost = 6;
+			return 6;
 		}
 		//Before another key on same hand - d(k1, k2)
 		if (AreSameHand(firstChar, secondChar))
 		{
-			insCost = KeyboardDistance(firstChar, secondChar);
+			return KeyboardDistance(firstChar, secondChar);
 		}
 		//Before a key on opposite hand
 		else 
 		{
-			insCost = 5;
+			return 5;
 		}
-
-		return insCost;
 	}
 
 	int InsertAfter(const char * s, const char * t, int i , int j, Cell arr[][100])
@@ -218,7 +210,8 @@ namespace StringCompareUtil
 		}
 
 		//Want to compare current t[j] with s's previous character (s[i-1])
-		char firstChar = FindActualPrevTargetChar(s, t, i, j, arr), secondChar = t[j];
+		char firstChar = (i != 0) ? FindActualPrevTargetChar(s, t, i, j, arr) : s[i-1];
+		char secondChar = t[j];
 		int insCost = 0;
 
 		//Repeated character - 1
@@ -232,29 +225,28 @@ namespace StringCompareUtil
 		{
 			//Bottom row - 2
 			if (GetKeyCoordinate(firstChar).row == 3)
-				insCost = 2;
+				return 2;
 			//Something else - 6
 			else
-				insCost = 6;
+				return 6;
 		}
+
 		//Character after a space - 6
 		if (firstChar == ' ' && secondChar != ' ')
 		{
-			insCost = 6;
+			return 6;
 		}
 
 
 		//After another key on same hand - d(k1, k2)
 		if (AreSameHand(firstChar, secondChar))
 		{
-			insCost = KeyboardDistance(firstChar, secondChar);
+			return KeyboardDistance(firstChar, secondChar);
 		}
 		//After a key on opposite hand - 5
 		else {
-			insCost = 5;
+			return 5;
 		}
-
-		return insCost;
 	}
 
 
@@ -265,7 +257,10 @@ namespace StringCompareUtil
 		if (i == 1)
 			return 6;
 
-		return DeletionCost(FindActualPrevTargetChar(s, t, i, j, arr), t[j]);
+		char firstChar = (j != 0) ? FindActualPrevTargetChar(s, t, i, j, arr) : s[i-1];
+		char secondChar = t[j];
+
+		return DeletionCost( firstChar, secondChar);
 	}
 
 	int DeletionCost(char firstChar, char secondChar)
