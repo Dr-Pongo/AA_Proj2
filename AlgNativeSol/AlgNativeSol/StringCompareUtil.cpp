@@ -109,10 +109,10 @@ namespace StringCompareUtil
 		return targetKeyFinger == typoKeyFinger;
 	}
 
-	char FindActualPrevTargetChar(const char* s, const char* t, int i, int j, int prev, Cell **arr)
+	char FindActualPrevTargetChar(const char* s, const char* t, int i, int j, Cell arr[][100])
 	{
-		//if (prev == -1)
-		//	return ' ';
+		//TODO: Read s[i-1]'s parent operation?
+		int prev = arr[i - 1][j - 1].previous;
 
 		//A Delete operation needs to look one further back. 
 		while (prev == DELETE && i > 0)
@@ -121,53 +121,24 @@ namespace StringCompareUtil
 		}
 
 		//If s[i-1]'s operation was either Insert, Sub, Match, or Transpose, the "actual" target character is t[i-1]
-		return (i >= 1) ? t[i - 1] : ' ';
+		return t[i-1];
 	}
 
-
-	int DeletionWrapper(const char * s, const char * t, int i, int j)
+	int InsertionWrapper(const char * s, const char * t, int i, int j, Cell arr[][100])
 	{
-		return 0;
-	}
+		int minInsCost = InsertBefore(s, t, i, j);
+		int insAfterCost = InsertAfter(s, t, i, j, arr);
 
-	int SubstitutionCost(char targetChar, char typoChar)
-	{
-		int subCost = 0;
-
-		if (targetChar == typoChar)
+		if (insAfterCost < minInsCost)
 		{
-			return 0;
+			minInsCost = insAfterCost;
 		}
 
-		//Space for anything or anything for space
-		if (targetChar == ' ' || typoChar == ' ')
-		{
-			return 6;
-		}
-		else {
-			//Key for another on same hand - d(k1, k2)
-			if (AreSameHand(targetChar, typoChar))
-			{
-				subCost = KeyboardDistance(targetChar, typoChar);
-			}
-			//Key for another on other hand - 
-			else {
-				//On same finger - 1
-				if (AreSameFinger(targetChar, typoChar))
-				{
-					subCost = 1;
-				}
-				//On different finger - 5
-				else {
-					subCost = 5;
-				}
-			}
-		}
-		return subCost;
+		return minInsCost;
 	}
 
 
-	int InsertBefore(const char * s, const char * t, int i, int j, Cell arr[][100])
+	int InsertBefore(const char * s, const char * t, int i, int j)
 	{
 		if (i == (strlen(s) - 1))
 		{
@@ -211,7 +182,7 @@ namespace StringCompareUtil
 		}
 
 		//Want to compare current t[j] with s's previous character (s[i-1])
-		char firstChar = s[i - 1], secondChar = t[j];
+		char firstChar = FindActualPrevTargetChar(s, t, i, j, arr), secondChar = t[j];
 		int insCost = 0;
 
 		//Repeated character - 1
@@ -250,83 +221,15 @@ namespace StringCompareUtil
 		return insCost;
 	}
 
-	int InsertionWrapper(const char * s, const char * t, int i, int j, Cell arr[][100])
+
+
+	int DeletionWrapper(const char * s, const char * t, int i, int j, Cell arr[][100])
 	{
-		int minInsCost = InsertBefore(s, t, i , j, arr);
-		int insAfterCost = InsertAfter(s, t, i , j, arr);
+		//Deleting first character in string
+		if (i == 1)
+			return 6;
 
-		if (insAfterCost < minInsCost)
-		{
-			minInsCost = insAfterCost;
-		}
-
-		return minInsCost;
-	}
-
-	int InsertionCost(char firstChar, char secondChar)
-	{
-		int insCost = 0;
-		int temp = 0;
-
-		//Repeated character - 1
-		//if (firstChar == secondChar)
-		//{
-		//	insCost = 1;
-		//	return insCost;
-		//}
-
-		//Space after key on bottom row - 2
-		if (GetKeyCoordinate(firstChar).row == 3 && secondChar == ' ')
-		{
-			insCost = 2;
-			return insCost;
-		}
-
-		//Space after something else - 6
-		//Character before a space - 6
-		if (secondChar == ' ' || firstChar == ' ')
-		{
-			insCost = 6;
-		}
-
-		//Before or after another key on same hand - d(k1, k2)
-		if (AreSameHand(firstChar, secondChar))
-		{
-			temp = KeyboardDistance(firstChar, secondChar);
-
-			//if this costs less than a previouis cost
-			if (insCost != 0 && temp < insCost)
-			{
-				insCost = temp;
-			}
-			//if there is no previous cost
-			else if (insCost == 0)
-			{
-				insCost = temp;
-			}
-			//else cheaper function already exists,
-			//keep subCost at the same value
-		}
-
-		//Before or after a key on opposite hand - 5
-		if (!AreSameHand(firstChar, secondChar))
-		{
-			temp = 5;
-
-			//if this costs less than a previouis cost
-			if (insCost != 0 && temp < insCost)
-			{
-				insCost = temp;
-			}
-			//if there is no previous cost
-			else if (insCost == 0)
-			{
-				insCost = temp;
-			}
-			//else cheaper function already exists,
-			//keep subCost at the same value
-		}
-		return insCost;
+		return DeletionCost(FindActualPrevTargetChar(s, t, i, j, arr), t[j]);
 	}
 
 	int DeletionCost(char firstChar, char secondChar)
@@ -372,6 +275,42 @@ namespace StringCompareUtil
 		return delCost;
 	}
 
+	int SubstitutionCost(char targetChar, char typoChar)
+	{
+		int subCost = 0;
+
+		if (targetChar == typoChar)
+		{
+			return 0;
+		}
+
+		//Space for anything or anything for space
+		if (targetChar == ' ' || typoChar == ' ')
+		{
+			return 6;
+		}
+		else {
+			//Key for another on same hand - d(k1, k2)
+			if (AreSameHand(targetChar, typoChar))
+			{
+				subCost = KeyboardDistance(targetChar, typoChar);
+			}
+			//Key for another on other hand - 
+			else {
+				//On same finger - 1
+				if (AreSameFinger(targetChar, typoChar))
+				{
+					subCost = 1;
+				}
+				//On different finger - 5
+				else {
+					subCost = 5;
+				}
+			}
+		}
+		return subCost;
+	}
+	
 	int TranspositionCost(char firstChar, char secondChar)
 	{
 		int transpCost = 0;

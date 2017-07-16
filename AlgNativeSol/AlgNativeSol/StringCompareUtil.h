@@ -22,17 +22,17 @@ namespace StringCompareUtil
 	KeyCoordinate GetKeyCoordinate(char);
 	bool AreSameHand(char firstChar, char secondChar);
 	bool AreSameFinger(char firstChar, char secondChar);
-	char FindActualPrevTargetChar(const char* s, const char* t, int i, int j, int prev, Cell **arr);
+	char FindActualPrevTargetChar(const char* s, const char* t, int i, int j, Cell arr[][100]);
+
 
 	int InsertionWrapper(const char * s, const char * t, int i, int j, Cell arr[][100]);
-	int InsertBefore(const char * s, const char * t, int i, int j, Cell **arr);
-	int InsertAfter(const char * s, const char * t, int i, int j, Cell **arr);
+	int InsertBefore(const char * s, const char * t, int i, int j);
+	int InsertAfter(const char * s, const char * t, int i, int j, Cell arr[][100]);
 
-	int DeletionWrapper(const char * s, const char * t, int i, int j);
+	int DeletionWrapper(const char * s, const char * t, int i, int j, Cell arr[][100]);
+	int DeletionCost(char firstChar, char secondChar);
 
 	int SubstitutionCost(char firstChar, char secondChar);
-	int InsertionCost(char firstChar, char secondChar);
-	int DeletionCost(char firstChar, char secondChar);
 	int TranspositionCost(char firstChar, char secondChar);
 };
 #endif // !STRINGCOMPAREUTIL_H

@@ -74,11 +74,11 @@ int string_compare(const char * s, const char * t, int i, int j)
 	//Substitution costs don't care about previous characters, only the current i & j chars
 	opt[MATCH] = string_compare(s, t, i - 1, j - 1) + StringCompareUtil::SubstitutionCost(s[i], t[j]);
 
-	//opt[INSERT] = string_compare(s, t, i, j - 1) + StringCompareUtil::InsertionCost(s[i], t[j]);
+
 	opt[INSERT] = string_compare(s, t, i, j - 1) + StringCompareUtil::InsertionWrapper(s, t, i, j, arr);
 
 
-	opt[DELETE] = string_compare(s, t, i - 1, j) + StringCompareUtil::DeletionCost(s[i], s[j]);
+	opt[DELETE] = string_compare(s, t, i - 1, j) + StringCompareUtil::DeletionWrapper(s, t, i, j, arr);
 
 	if ((i > 1 && j > 1) && (s[i] == t[j - 1] && s[i - 1] == t[j]))
 	{
