@@ -185,11 +185,6 @@ namespace StringCompareUtil
 			return 1;
 		}
 
-		//Character before a space - 6
-		if (firstChar != ' ' && secondChar == ' ')
-		{
-			return 6;
-		}
 		//Before another key on same hand - d(k1, k2)
 		if (AreSameHand(firstChar, secondChar))
 		{
@@ -199,6 +194,12 @@ namespace StringCompareUtil
 		else 
 		{
 			return 5;
+		}
+
+		//Character before a space - 6
+		if (firstChar != ' ' && secondChar == ' ')
+		{
+			return 6;
 		}
 	}
 
@@ -212,7 +213,6 @@ namespace StringCompareUtil
 		//Want to compare current t[j] with s's previous character (s[i-1])
 		char firstChar = (i != 0) ? FindActualPrevTargetChar(s, t, i, j, arr) : s[i-1];
 		char secondChar = t[j];
-		int insCost = 0;
 
 		//Repeated character - 1
 		if (firstChar == secondChar)
@@ -231,13 +231,6 @@ namespace StringCompareUtil
 				return 6;
 		}
 
-		//Character after a space - 6
-		if (firstChar == ' ' && secondChar != ' ')
-		{
-			return 6;
-		}
-
-
 		//After another key on same hand - d(k1, k2)
 		if (AreSameHand(firstChar, secondChar))
 		{
@@ -246,6 +239,12 @@ namespace StringCompareUtil
 		//After a key on opposite hand - 5
 		else {
 			return 5;
+		}
+
+		//Character after a space - 6
+		if (firstChar == ' ' && secondChar != ' ')
+		{
+			return 6;
 		}
 	}
 
@@ -258,52 +257,50 @@ namespace StringCompareUtil
 			return 6;
 
 		char firstChar = (j != 0) ? FindActualPrevTargetChar(s, t, i, j, arr) : s[i-1];
-		char secondChar = t[j];
+		char secondChar = s[i];
 
 		return DeletionCost( firstChar, secondChar);
 	}
 
 	int DeletionCost(char firstChar, char secondChar)
 	{
-		int delCost = 0;
-		int temp = 0;
-
 		//Deleting Repeated character - 1
 		if (firstChar == secondChar)
 		{
-			delCost = 1;
-			return delCost;
-		}
+			return 1;
 
-		//Space - 3
-		if (secondChar == ' ')
-		{
-			delCost = 3;
 		}
 
 		//Character after another key on same hand - 2
 		if (AreSameHand(firstChar, secondChar))
 		{
-			delCost = 2;
 			return 2;
 		}
 
-		//Character after space or key on different hand - 6
-		if (firstChar == ' ' || !AreSameHand(firstChar, secondChar))
+		//Space - 3
+		if (secondChar == ' ')
 		{
-			//if subCost is not 3
-			if (delCost == 0)
+			return 3;
+		}
+
+		
+
+		//Deleting character after ...
+		if (secondChar != ' ')
+		{
+			//Another key on same hand
+			if (AreSameHand(firstChar, secondChar))
 			{
-				delCost = 6;
+				return 6;
+			}
+
+			//Character after space or key on different hand - 6
+			if(firstChar == ' ' || !AreSameHand(firstChar, secondChar))
+			{
+				return 6;
 			}
 		}
 
-		//First character in string - 6
-		//************************************************
-		//TODO: find out if character is first in string
-		//************************************************
-
-		return delCost;
 	}
 
 
@@ -315,29 +312,23 @@ namespace StringCompareUtil
 
 	int TranspositionCost(char firstChar, char secondChar)
 	{
-		int transpCost = 0;
-
-		//Transposing Space with anything else - 3
-		if (firstChar == ' ' || secondChar == ' ')
-		{
-			transpCost = 3;
-		}
-
 		//Keys on different hands - 1
 		if (!AreSameHand(firstChar, secondChar))
 		{
-			transpCost = 1;
-			return transpCost;
+			return 1;
 		}
 
 		//Keys on the same hand - 2
 		if (AreSameHand(firstChar, secondChar))
 		{
-			transpCost = 2;
-			return transpCost;
+			return 2;
 		}
 
-		return transpCost;
+		//Transposing Space with anything else - 3
+		if (firstChar == ' ' || secondChar == ' ')
+		{
+			return 3;
+		}
 	}
 }
 
