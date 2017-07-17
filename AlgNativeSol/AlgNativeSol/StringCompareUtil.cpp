@@ -1,6 +1,7 @@
 #include "StringCompareUtil.h"
 #include <map>
 #include <stdlib.h>
+#include <string.h>
 
 #define MATCH 0 /* enumerated type symbol for match */ 
 #define INSERT 1 /* enumerated type symbol for insert */ 

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cstdlib>
 #include "StringCompareUtil.h"
 
 #define MATCH 0 /* enumerated type symbol for match */ 
