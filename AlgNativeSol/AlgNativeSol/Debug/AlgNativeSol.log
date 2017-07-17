@@ -1,3 +1,4 @@
 ﻿  Source.cpp
+c:\users\pongo\documents\_usf_summer_2017\analysisofalgorithms\projects\project_2\aa_proj2\algnativesol\algnativesol\source.cpp(37): warning C4018: '<': signed/unsigned mismatch
   AlgNativeSol.vcxproj -> C:\Users\Pongo\Documents\_USF_Summer_2017\AnalysisOfAlgorithms\Projects\Project_2\AA_Proj2\AlgNativeSol\Debug\AlgNativeSol.exe
   AlgNativeSol.vcxproj -> C:\Users\Pongo\Documents\_USF_Summer_2017\AnalysisOfAlgorithms\Projects\Project_2\AA_Proj2\AlgNativeSol\Debug\AlgNativeSol.pdb (Partial PDB)

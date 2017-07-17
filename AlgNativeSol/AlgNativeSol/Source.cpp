@@ -1,6 +1,4 @@
-#include <stdio.h>
 #include <iostream>
-#include <string.h>
 #include <fstream>
 #include <string>
 #include "StringCompareUtil.h"
@@ -36,7 +34,7 @@ int wrapper_function(string target, string typo)
 				else {
 					arr[i][j].cost = StringCompareUtil::InsertAfter(target.c_str(), typo.c_str(), i , j, arr);
 					arr[i][j].previous = INSERT;
-					if(j < target.length() && j < typo.length())
+					if((j < target.length()) && (j < typo.length()))
 						arr[i][j].letter = typo[j];
 				}
 			}	//Init first column (Base case)
@@ -109,7 +107,7 @@ int string_compare(const char * s, const char * t, int i, int j)
 	return arr[i][j].cost;
 }
 
-void output_recursive(string target, string typo, int i, int j)
+void output_recursive(string target, string typo, int i, int j, ofstream& outputFile)
 {
 	//Base case where we reached [0,0]
 	if (arr[i][j].previous == -1)
@@ -121,31 +119,31 @@ void output_recursive(string target, string typo, int i, int j)
 	// need to adjust the current i or j to (i-1)/(j-1)
 	if (arr[i][j].previous == MATCH)
 	{
-		output_recursive(target, typo, i - 1, j - 1);
+		output_recursive(target, typo, i - 1, j - 1, outputFile);
 		if (target[i] == typo[j])
 			return;
-		cout << "Substitute " << arr[i][j].letter << " at " << j  - 1 << endl;
+		outputFile << "Substitute " << arr[i][j].letter << " at " << j  - 1 << endl;
 		return;
 	}
 
 	if (arr[i][j].previous == INSERT)
 	{
-		output_recursive(target, typo, i, j - 1);
-		cout << "Insert " << arr[i][j].letter << " before " << j - 1 << endl; //Not sure if j-1 is correct, but it gives the correct output for the Inserts in the example
+		output_recursive(target, typo, i, j - 1, outputFile);
+		outputFile << "Insert " << arr[i][j].letter << " before " << j - 1 << endl; //Not sure if j-1 is correct, but it gives the correct output for the Inserts in the example
 		return;
 	}
 
 	if (arr[i][j].previous == DELETE)
 	{
-		output_recursive(target, typo, i - 1, j);
-		cout << "Delete " << i << endl;
+		output_recursive(target, typo, i - 1, j, outputFile);
+		outputFile << "Delete " << i << endl;
 		return;
 	}
 
 	if (arr[i][j].previous == TRANSP)
 	{
-		output_recursive(target, typo, i - 2, j - 2);
-		cout << "Transpose " << (j - 2) << "-" << (j - 1) << endl;
+		output_recursive(target, typo, i - 2, j - 2, outputFile);
+		outputFile << "Transpose " << (j - 2) << "-" << (j - 1) << endl;
 		return;
 	}
 
@@ -158,10 +156,18 @@ int main() {
 	string pairs;
 	int numPairs = 0;
 	ifstream inputFile("input.txt");
+	ofstream outputFile;
+	outputFile.open("output.txt");
 
 	if (!inputFile)
 	{
 		cout << "Err reading input.txt" << endl;
+		system("pause");
+		return -1;
+	}
+	if (!outputFile)
+	{
+		cout << "Err accessing output.txt" << endl;
 		system("pause");
 		return -1;
 	}
@@ -171,7 +177,7 @@ int main() {
 	numPairs = atoi(pairs.c_str());
 
 	// Get input strings
-	for(int i = 0; i < numPairs - 1; i++)
+	for(int i = 0; i < numPairs; i++)
 	{
 		if (inputFile.eof()) // error checking
 		{
@@ -179,14 +185,19 @@ int main() {
 			system("pause");
 			return -1;
 		}
+
 		getline(inputFile, target, '\n');
 		getline(inputFile, typo, '\n');
+		
 		target.insert(0, 1, ' ');
 		typo.insert(0, 1, ' ');
-		cout << wrapper_function(target, typo) << endl;
-		output_recursive(target, typo, target.length() - 1, typo.length() - 1);
+
+		outputFile << wrapper_function(target, typo) << endl;
+		output_recursive(target, typo, target.length() - 1, typo.length() - 1, outputFile);
+		outputFile << "\n"; // Blank line between tests
+
 	}
 
-	//cout << wrapper_function() << endl;
-	system("pause");
+	inputFile.close();
+	outputFile.close();
 }

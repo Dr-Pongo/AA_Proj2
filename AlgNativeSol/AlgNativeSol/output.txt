@@ -1,0 +1,25 @@
+22
+Transpose 1-2
+Insert d before 4
+Transpose 6-7
+Insert f before 8
+Insert a before 10
+Delete 11
+Delete 13
+Insert a before 15
+Substitute s at 16
+Substitute a at 24
+Substitute k at 26
+Substitute s at 27
+Substitute j at 28
+Insert m before 30
+Substitute i at 34
+Transpose 39-40
+Transpose 44-45
+
+4
+Insert t before 0
+Insert e before 1
+Insert h before 2
+Insert   before 3
+
